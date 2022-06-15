@@ -1,4 +1,7 @@
 .homeContent {
-    display: flex;
-    @apply flex-col py-4 px-8 gap-4 md:flex-row lg:py-8 lg:px-16 lg:gap-10;
+    @apply py-4 px-8 lg:py-8 lg:px-16;
+}
+
+.MuiGrid-item {
+    @apply flex justify-center;
 }

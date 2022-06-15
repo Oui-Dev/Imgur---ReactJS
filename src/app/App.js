@@ -6,7 +6,7 @@ export default function App() {
     return (
         <Router>
             <header className="App-header">
-                <p>React</p>
+                <p>Imgur</p>
             </header>
             <Routes>
                 <Route path="/" element={<Home />} />
