@@ -8,23 +8,16 @@ import {CardActionArea} from '@mui/material'
 
 import imgTest from '../../assets/contemplative-reptile.jpg'
 
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import axios from 'axios'
 import {Buffer} from 'buffer'
 import {useState, useEffect} from 'react'
 
 export default function Home() {
     const [accessToken, setAccessToken] = useState()
+    const queryClient = new QueryClient()
 
-    const itemsArray = [
-        {title: 'test1', desc: 'je suis le test1'},
-        {title: 'test2', desc: 'je suis le test2'},
-        {title: 'test3', desc: 'je suis le test3'},
-        {title: 'test4', desc: 'je suis le test4'},
-        {title: 'test5', desc: 'je suis le test5'},
-        {title: 'test6', desc: 'je suis le test6'},
-        {title: 'test7', desc: 'je suis le test7'},
-    ]
-
+    // recup le token d'accès
     useEffect(() => {
         if (!accessToken) {
             if (document.cookie.split(';').some((item) => item.trim().startsWith('token='))) {
@@ -37,6 +30,7 @@ export default function Home() {
         }
     }, [])
 
+    // génère un token d'accès
     function getNewAccessToken() {
         var data = new FormData()
         data.append('client_id', 'ce9ecff3e16a7b6')
@@ -63,19 +57,50 @@ export default function Home() {
     }
 
     // recup les images du compte
-    var config = {
-        method: 'get',
-        url: 'https://api.imgur.com/3/account/me/images',
-        headers: {Authorization: `Bearer ${accessToken}`},
-    }
+    function GetProfileGallery({accessToken}) {
+        const config = {
+            method: 'get',
+            url: 'https://api.imgur.com/3/account/me/images',
+            headers: {Authorization: `Bearer ${accessToken}`},
+        }
 
-    axios(config)
-        .then(function (response) {
-            console.log(JSON.stringify(response.data))
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
+        const {isLoading, error, data, isFetching} = useQuery('repoData', () => axios(config).then((res) => res.data))
+
+        if (isLoading)
+            return (
+                <Grid container justifyContent="center">
+                    Loading...
+                </Grid>
+            )
+        if (error)
+            return (
+                <Grid container justifyContent="center">
+                    An error has occurred {error.message}
+                </Grid>
+            )
+
+        console.log(data)
+
+        return (
+            <Grid container spacing={3} columns={{xs: 3, sm: 6, md: 9, lg: 12}}>
+                {Array.from(data.data).map((arrItem, index) => (
+                    <Grid item xs={3} key={index}>
+                        <CardItem name={arrItem.title} desc={arrItem.desc} />
+                    </Grid>
+                ))}
+                {data.data.length === 0 ? (
+                    <Grid item xs={12}>
+                        Aucune photo
+                    </Grid>
+                ) : null}
+                {isFetching ? (
+                    <Grid item xs={12}>
+                        Updating...
+                    </Grid>
+                ) : null}
+            </Grid>
+        )
+    }
 
     const CardItem = ({name, desc}) => {
         return (
@@ -97,13 +122,18 @@ export default function Home() {
 
     return (
         <div className="homeContent">
-            <Grid container spacing={3} columns={{xs: 3, sm: 6, md: 9, lg: 12}}>
-                {Array.from(itemsArray).map((arrItem, index) => (
-                    <Grid item xs={3} key={index}>
-                        <CardItem name={arrItem.title} desc={arrItem.desc} />
-                    </Grid>
-                ))}
-            </Grid>
+            {accessToken ? (
+                <QueryClientProvider client={queryClient}>
+                    <GetProfileGallery accessToken={accessToken} />
+                </QueryClientProvider>
+            ) : null}
+            <span
+                className="material-symbols-rounded"
+                onClick={(e) => {
+                    console.log(e)
+                }}>
+                cloud_upload
+            </span>
         </div>
     )
 }
