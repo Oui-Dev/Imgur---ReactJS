@@ -6,29 +6,11 @@
         @apply fixed bottom-8 right-8 text-white rounded-full p-2 cursor-pointer;
     }
 }
-.MuiPaper-root {
-    @apply relative pb-9;
-}
-.MuiCardActions-root {
-    @apply absolute bottom-1 justify-around w-full;
-}
-.MuiGrid-item {
-    @apply flex justify-center;
-}
-.cardActionsFooter {
-    @apply flex items-center gap-1;
-}
 .switch {
     display: flex !important;
     @apply justify-center mb-6;
 }
 .uploadForm {
-    & i {
-        @apply absolute top-1 right-1 text-2xl cursor-pointer;
-    }
-    & form {
-        @apply flex flex-col;
-    }
     & form > * {
         @apply mt-4 w-full rounded-md p-2;
     }
@@ -37,5 +19,8 @@
     }
     & button {
         @apply bg-blue-600 text-white;
+        &:hover {
+            @apply bg-blue-700;
+        }
     }
 }

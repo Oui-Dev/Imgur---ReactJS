@@ -76,17 +76,17 @@ export default function Home() {
         return (
             <Grid container spacing={3} columns={{xs: 3, sm: 6, md: 9, lg: 12}}>
                 {Array.from(data.data).map((arrItem, index) => (
-                    <Grid item xs={3} key={index}>
+                    <Grid item className="flex justify-center" xs={3} key={index}>
                         <CardItem data={arrItem} />
                     </Grid>
                 ))}
                 {data.data.length === 0 ? (
-                    <Grid item xs={12}>
+                    <Grid item className="flex justify-center" xs={12}>
                         Aucune photo
                     </Grid>
                 ) : null}
                 {isFetching ? (
-                    <Grid item xs={12}>
+                    <Grid item className="flex justify-center" xs={12}>
                         Updating...
                     </Grid>
                 ) : null}
@@ -112,7 +112,7 @@ export default function Home() {
 
     const CardItem = ({data}) => {
         return (
-            <Card sx={{maxWidth: 345}}>
+            <Card sx={{maxWidth: 345}} className="relative pb-9">
                 {data.images ? (
                     <CardMedia
                         component={data.images[0].type === 'video/mp4' ? 'video' : 'img'}
@@ -129,16 +129,16 @@ export default function Home() {
                         {data.description}
                     </Typography>
                 </CardContent>
-                <CardActions>
-                    <div className="cardActionsFooter">
+                <CardActions className="absolute bottom-1 justify-around w-full">
+                    <div className="flex items-center gap-1">
                         {data.ups}
                         <i className="bx bxs-upvote"></i>
                     </div>
-                    <div className="cardActionsFooter">
+                    <div className="flex items-center gap-1">
                         {data.comment_count}
                         <i className="bx bxs-chat"></i>
                     </div>
-                    <div className="cardActionsFooter">
+                    <div className="flex items-center gap-1">
                         {data.views}
                         <i className="bx bxs-show"></i>
                     </div>
@@ -168,17 +168,17 @@ export default function Home() {
                 }}></i>
 
             <Backdrop open={open}>
-                <Card sx={{minWidth: 275}}>
+                <Card sx={{minWidth: 275}} className="relative">
                     <CardContent className="uploadForm">
                         <i
-                            class="bx bx-x"
+                            className="bx bx-x absolute top-1 right-1 text-2xl cursor-pointer"
                             onClick={() => {
                                 setOpen(false)
                             }}></i>
                         <Typography variant="h5" component="div">
                             Publication
                         </Typography>
-                        <form method="post" enctype="multipart/form-data">
+                        <form method="post" enctype="multipart/form-data" className="flex flex-col">
                             <input type="text" placeholder="Titre" required />
                             <input type="file" accept=".jpg, .png, .jpeg, .mp4" required />
                             <button type="submit">Publier</button>
