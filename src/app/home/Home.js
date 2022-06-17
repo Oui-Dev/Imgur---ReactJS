@@ -1,15 +1,6 @@
 import './Home.scss'
-import {
-    Grid,
-    Card,
-    CardContent,
-    CardMedia,
-    CardActions,
-    Typography,
-    ToggleButton,
-    ToggleButtonGroup,
-    Backdrop,
-} from '@mui/material'
+import {Grid, Card, CardContent, CardMedia, CardActions, Typography} from '@mui/material'
+import {ToggleButton, ToggleButtonGroup, Backdrop} from '@mui/material'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {useState, useEffect, useRef} from 'react'
 import {Buffer} from 'buffer'
@@ -24,6 +15,7 @@ const initialConfig = {
 export default function Home() {
     const [accessToken, setAccessToken] = useState()
     const [displayConfig, setDisplayConfig] = useState(initialConfig)
+    const [open, setOpen] = useState(false)
     const displayState = useRef('viral')
     const queryClient = new QueryClient()
 
@@ -171,9 +163,29 @@ export default function Home() {
             </QueryClientProvider>
             <i
                 className="bx bx-cloud-upload"
-                onClick={(e) => {
-                    console.log(e.target)
+                onClick={() => {
+                    setOpen(!open)
                 }}></i>
+
+            <Backdrop open={open}>
+                <Card sx={{minWidth: 275}}>
+                    <CardContent className="uploadForm">
+                        <i
+                            class="bx bx-x"
+                            onClick={() => {
+                                setOpen(false)
+                            }}></i>
+                        <Typography variant="h5" component="div">
+                            Publication
+                        </Typography>
+                        <form method="post" enctype="multipart/form-data">
+                            <input type="text" placeholder="Titre" required />
+                            <input type="file" accept=".jpg, .png, .jpeg, .mp4" required />
+                            <button type="submit">Publier</button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </Backdrop>
         </div>
     )
 }
