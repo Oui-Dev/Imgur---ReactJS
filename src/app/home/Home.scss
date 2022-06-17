@@ -3,10 +3,21 @@
     & .bx-cloud-upload {
         background-color: #282c34;
         font-size: 35px;
-        @apply absolute bottom-8 right-8 text-white rounded-full p-2 cursor-pointer;
+        @apply fixed bottom-8 right-8 text-white rounded-full p-2 cursor-pointer;
     }
 }
-
+.MuiPaper-root {
+    @apply relative pb-9;
+}
+.MuiCardActions-root {
+    @apply absolute bottom-1 justify-around w-full;
+}
 .MuiGrid-item {
     @apply flex justify-center;
+}
+.cardActionsFooter {
+    @apply flex items-center gap-1;
+}
+.switch {
+    @apply justify-center mb-4;
 }
