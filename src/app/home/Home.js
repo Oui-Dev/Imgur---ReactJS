@@ -5,11 +5,9 @@ import {useState, useEffect} from 'react'
 import {Buffer} from 'buffer'
 import axios from 'axios'
 
-import imgTest from '../../assets/contemplative-reptile.jpg'
-
 const initialConfig = {
     method: 'get',
-    url: 'https://api.imgur.com/3/gallery/hot/viral?showViral=true&mature=true',
+    url: 'https://api.imgur.com/3/gallery/hot/viral?showViral=true&mature=false',
     headers: {Authorization: 'Client-ID ce9ecff3e16a7b6'},
 }
 
@@ -72,8 +70,6 @@ export default function Home() {
                 </Grid>
             )
 
-        console.log(data)
-
         return (
             <Grid container spacing={3} columns={{xs: 3, sm: 6, md: 9, lg: 12}}>
                 {Array.from(data.data).map((arrItem, index) => (
@@ -111,10 +107,17 @@ export default function Home() {
     }
 
     const CardItem = ({data}) => {
-        console.log(data.images)
         return (
             <Card sx={{maxWidth: 345}}>
-                <CardMedia component="img" height="140" image={imgTest} alt="green iguana" />
+                {data.images ? (
+                    <CardMedia
+                        component={data.images[0].type === 'video/mp4' ? 'video' : 'img'}
+                        height="140"
+                        image={data.images[0].link}
+                        controls
+                        alt="imgur content"
+                    />
+                ) : null}
                 <CardContent>
                     <Typography gutterBottom variant="h7" component="div">
                         {data.title}
