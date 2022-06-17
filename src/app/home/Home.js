@@ -1,7 +1,17 @@
 import './Home.scss'
-import {Grid, Card, CardContent, CardMedia, CardActions, Typography, Stack, Switch} from '@mui/material'
+import {
+    Grid,
+    Card,
+    CardContent,
+    CardMedia,
+    CardActions,
+    Typography,
+    ToggleButton,
+    ToggleButtonGroup,
+    Backdrop,
+} from '@mui/material'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import {Buffer} from 'buffer'
 import axios from 'axios'
 
@@ -14,6 +24,7 @@ const initialConfig = {
 export default function Home() {
     const [accessToken, setAccessToken] = useState()
     const [displayConfig, setDisplayConfig] = useState(initialConfig)
+    const displayState = useRef('viral')
     const queryClient = new QueryClient()
 
     // recup le token d'accès
@@ -92,11 +103,12 @@ export default function Home() {
     }
 
     // change la config axios pour modifier l'affichage
-    function changeDisplay(state) {
+    function changeDisplay(e, state) {
         let config = {}
-        if (state === false) {
+        displayState.current = state
+        if (state === 'viral') {
             config = initialConfig
-        } else {
+        } else if (state === 'personnel') {
             config = {
                 method: 'get',
                 url: 'https://api.imgur.com/3/account/me/images',
@@ -112,7 +124,6 @@ export default function Home() {
                 {data.images ? (
                     <CardMedia
                         component={data.images[0].type === 'video/mp4' ? 'video' : 'img'}
-                        height="140"
                         image={data.images[0].link}
                         controls
                         alt="imgur content"
@@ -146,15 +157,15 @@ export default function Home() {
 
     return (
         <div className="homeContent">
-            <Stack direction="row" spacing={1} alignItems="center" className="switch">
-                <Typography>Viral</Typography>
-                <Switch
-                    onClick={(e) => {
-                        changeDisplay(e.target.checked)
-                    }}
-                />
-                <Typography>Personnel</Typography>
-            </Stack>
+            <ToggleButtonGroup
+                color="primary"
+                value={displayState.current}
+                exclusive
+                onChange={changeDisplay}
+                className="switch">
+                <ToggleButton value="viral">Viral</ToggleButton>
+                <ToggleButton value="personnel">Personnel</ToggleButton>
+            </ToggleButtonGroup>
             <QueryClientProvider client={queryClient}>
                 <GetGallery config={displayConfig} />
             </QueryClientProvider>

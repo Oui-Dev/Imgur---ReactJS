@@ -19,5 +19,6 @@
     @apply flex items-center gap-1;
 }
 .switch {
-    @apply justify-center mb-4;
+    display: flex !important;
+    @apply justify-center mb-6;
 }
