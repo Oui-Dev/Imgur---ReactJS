@@ -127,13 +127,11 @@ export default function Home() {
                     <GetProfileGallery accessToken={accessToken} />
                 </QueryClientProvider>
             ) : null}
-            <span
-                className="material-symbols-rounded"
+            <i
+                className="bx bx-cloud-upload"
                 onClick={(e) => {
-                    console.log(e)
-                }}>
-                cloud_upload
-            </span>
+                    console.log(e.target)
+                }}></i>
         </div>
     )
 }
