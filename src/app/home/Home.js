@@ -1,6 +1,6 @@
 import './Home.scss'
 import {Grid, Card, CardContent, CardMedia, CardActions, Typography} from '@mui/material'
-import {ToggleButton, ToggleButtonGroup, Backdrop} from '@mui/material'
+import {ToggleButton, ToggleButtonGroup, Backdrop, Snackbar, Alert} from '@mui/material'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {useState, useEffect, useRef} from 'react'
 import {Buffer} from 'buffer'
@@ -15,7 +15,8 @@ const initialConfig = {
 export default function Home() {
     const [accessToken, setAccessToken] = useState()
     const [displayConfig, setDisplayConfig] = useState(initialConfig)
-    const [open, setOpen] = useState(false)
+    const [openForm, setOpenForm] = useState(false)
+    const [openSnackbar, setOpenSnackbar] = useState(false)
     const displayState = useRef('viral')
     const queryClient = new QueryClient()
 
@@ -110,6 +111,51 @@ export default function Home() {
         setDisplayConfig(config)
     }
 
+    // upload un fichier sur imgur
+    function onSubmit(e) {
+        e.preventDefault()
+        const title = e.target.querySelector('input[type=text]').value
+        const file = e.target.querySelector('input[type=file]').files[0]
+        const authorizedFile = [
+            'image/png',
+            'image/jpeg',
+            'image/jpg',
+            'image/gif',
+            'video/mp4',
+            'video/webm',
+            'video/x-matroska',
+            'video/quicktime',
+            'video/x-flv',
+            'video/x-msvideo',
+            'video/x-ms-wmv',
+            'video/mpeg',
+        ]
+
+        if (authorizedFile.includes(file.type)) {
+            const formData = new FormData()
+            formData.append(file.type.substring(0, 5), file)
+            formData.append('type', 'file')
+            formData.append('title', title)
+
+            const config = {
+                method: 'post',
+                url: 'https://api.imgur.com/3/image',
+                'Content-type': 'application/x-www-form-urlencoded',
+                // headers: {Authorization: 'Client-ID ce9ecff3e16a7b6'}, // Anonymous
+                headers: {Authorization: `Bearer ${accessToken}`}, // Authenticated
+                data: formData,
+            }
+            axios(config)
+                .then(function () {
+                    setOpenForm(false)
+                    setOpenSnackbar(true)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        }
+    }
+
     const CardItem = ({data}) => {
         return (
             <Card sx={{maxWidth: 345}} className="relative pb-9">
@@ -161,24 +207,24 @@ export default function Home() {
             <QueryClientProvider client={queryClient}>
                 <GetGallery config={displayConfig} />
             </QueryClientProvider>
-            <i
-                className="bx bx-cloud-upload"
-                onClick={() => {
-                    setOpen(!open)
-                }}></i>
+            <i className="bx bx-cloud-upload" onClick={() => setOpenForm(!openForm)} />
 
-            <Backdrop open={open}>
-                <Card sx={{minWidth: 275}} className="relative">
+            <Backdrop open={openForm}>
+                <Card sx={{minWidth: 300}} className="relative">
                     <CardContent className="uploadForm">
                         <i
                             className="bx bx-x absolute top-1 right-1 text-2xl cursor-pointer"
                             onClick={() => {
-                                setOpen(false)
+                                setOpenForm(false)
                             }}></i>
                         <Typography variant="h5" component="div">
                             Publication
                         </Typography>
-                        <form method="post" enctype="multipart/form-data" className="flex flex-col">
+                        <form
+                            method="post"
+                            encType="multipart/form-data"
+                            className="flex flex-col"
+                            onSubmit={(e) => onSubmit(e)}>
                             <input type="text" placeholder="Titre" required />
                             <input type="file" accept=".jpg, .png, .jpeg, .mp4" required />
                             <button type="submit">Publier</button>
@@ -186,6 +232,15 @@ export default function Home() {
                     </CardContent>
                 </Card>
             </Backdrop>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={4000}
+                anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                onClose={() => setOpenSnackbar(false)}>
+                <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
+                    Fichier ajouté !
+                </Alert>
+            </Snackbar>
         </div>
     )
 }
