@@ -157,12 +157,21 @@ export default function Home() {
     }
 
     const CardItem = ({data}) => {
+        const mediaData = {link: null, type: null}
+        if (data.images) {
+            mediaData.link = data.images[0].link
+            mediaData.type = data.images[0].type.substring(0, 5)
+        } else {
+            mediaData.link = data.link
+            mediaData.type = data.type.substring(0, 5)
+        }
+
         return (
-            <Card sx={{maxWidth: 345}} className="relative pb-9">
-                {data.images ? (
+            <Card sx={{minWidth: 250, maxWidth: 390}} className="relative pb-9">
+                {mediaData.link ? (
                     <CardMedia
-                        component={data.images[0].type === 'video/mp4' ? 'video' : 'img'}
-                        image={data.images[0].link}
+                        component={mediaData.type === 'video' ? 'video' : 'img'}
+                        image={mediaData.link}
                         controls
                         alt="imgur content"
                     />
